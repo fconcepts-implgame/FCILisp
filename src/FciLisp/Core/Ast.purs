@@ -44,60 +44,63 @@ instance showErrorType :: Show ErrorType where
 
 derive instance eqErrorType :: Eq ErrorType
 
-eval :: Expression -> Either Error Expression
+data Environment
+  = Environment (List { name :: String, value :: Expression })
+
+eval :: Expression -> Environment -> Either Error { expr :: Expression, env :: Environment }
 -- Literals
-eval (List Nil) = Right nil
-eval (Atom "t") = Right t
+eval (List Nil) env = Right { expr: nil, env: env }
+eval (Atom "t") env = Right { expr: t, env: env }
 -- Constructors
-eval (List (Cons (Atom "cons") (Cons expr1 (Cons expr2 Nil)))) = do
-    fixed1 <- eval expr1
-    fixed2 <- eval expr2
-    Right $ List $ (Atom "cons"):fixed1:fixed2:Nil
+eval (List (Cons (Atom "cons") (Cons expr1 (Cons expr2 Nil)))) env = do
+    fixed1 <- eval expr1 env
+    fixed2 <- eval expr2 env
+    Right $ { expr: List $ (Atom "cons"):(fixed1.expr):(fixed2.expr):Nil, env: env }
 -- Quote
-eval (List (Cons (Atom "quote") (Cons expr Nil))) = Right expr
+eval (List (Cons (Atom "quote") (Cons expr Nil))) env = Right { expr, env }
 -- Predicates
-eval (List (Cons (Atom "atom") (Cons expr Nil))) = do
-  fixed <- eval expr
-  case fixed of
-    Atom _ -> Right t
-    List Nil -> Right t
-    _ -> Right nil
-eval (List (Cons (Atom "eq") (Cons expr1 (Cons expr2 Nil)))) = do
-  fixed1 <- eval expr1
-  fixed2 <- eval expr2
-  case { fixed1, fixed2 } of
-    { fixed1: Atom str1, fixed2: Atom str2 } -> Right $ if str1 == str2 then t else nil
-    { fixed1: List Nil, fixed2: List Nil } -> Right t
-    _ -> Right nil
+eval (List (Cons (Atom "atom") (Cons expr Nil))) env = do
+  fixed <- eval expr env
+  case fixed.expr of
+    Atom _ -> Right { expr: t, env: env }
+    List Nil -> Right { expr: t, env: env }
+    _ -> Right { expr: nil, env: env }
+eval (List (Cons (Atom "eq") (Cons expr1 (Cons expr2 Nil)))) env = do
+  fixed1 <- eval expr1 env
+  fixed2 <- eval expr2 env
+  case { fixed1: fixed1.expr, fixed2: fixed2.expr } of
+    { fixed1: Atom str1, fixed2: Atom str2 } -> Right { expr: if str1 == str2 then t else nil, env: env }
+    { fixed1: List Nil, fixed2: List Nil } -> Right { expr: t, env: env }
+    _ -> Right { expr : nil, env: env }
 -- Operators
-eval (List (Cons (Atom "car") (Cons x Nil))) = do
-  fixedX <- eval x
-  case fixedX of
-    List (Cons (Atom "cons") (Cons head (Cons _ Nil))) -> Right head
+eval (List (Cons (Atom "car") (Cons x Nil))) env = do
+  fixedX <- eval x env
+  case fixedX.expr of
+    List (Cons (Atom "cons") (Cons head (Cons _ Nil))) -> Right { expr: head, env: env }
     List Nil -> Left $ Error InvalidArgumentsError "in 'car'"
     _ -> Left $ Error InvalidArgumentsError "in 'car'"
-eval (List (Cons (Atom "cdr") (Cons x Nil))) = do
-  fixedX <- eval x
-  case fixedX of
-    List (Cons (Atom "cons") (Cons _ (Cons tail Nil))) -> Right tail
+eval (List (Cons (Atom "cdr") (Cons x Nil))) env = do
+  fixedX <- eval x env
+  case fixedX.expr of
+    List (Cons (Atom "cons") (Cons _ (Cons tail Nil))) -> Right { expr: tail, env: env }
     List Nil -> Left $ Error InvalidArgumentsError "in 'cdr'"
     _ -> Left $ Error InvalidArgumentsError "in 'cdr'"
-eval (List (Cons (Atom "cond") pairExprs)) = case pairExprs # traverse
+eval (List (Cons (Atom "cond") pairExprs)) env = case pairExprs # traverse
   (\pairExpr -> case pairExpr of
     List (Cons cond (Cons expr Nil)) -> Just { cond, expr }
     _ -> Nothing
   ) of
     Nothing -> Left $ Error InvalidArgumentsError "in 'cond'"
     Just pairs -> case pairs # findMap
-      (\{ cond, expr } -> case eval cond of
+      (\{ cond, expr } -> case eval cond env of
         left@(Left _) -> Just left
-        Right (List Nil) -> Nothing
-        Right _ -> Just $ Right expr
+        Right { expr: (List Nil), env: _ } -> Nothing
+        Right { expr: _, env: env } -> Just $ Right { expr, env }
       ) of
         Nothing -> Left $ Error ConditionCoverageError "in 'cond'"
         Just left@(Left _) -> left
-        Just (Right expr) -> eval expr
+        Just (Right { expr, env }) -> eval expr env
 
-eval _ = Left $ Error SyntaxError ""
+eval _ env = Left $ Error SyntaxError ""
 
 
