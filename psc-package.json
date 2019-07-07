@@ -5,6 +5,10 @@
   "depends": [
     "console",
     "effect",
+    "either",
+    "foldable-traversable",
+    "lists",
+    "maybe",
     "prelude",
     "psci-support"
   ]
