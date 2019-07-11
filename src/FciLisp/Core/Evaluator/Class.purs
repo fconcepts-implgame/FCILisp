@@ -2,7 +2,6 @@ module FciLisp.Core.Evaluator.Class where
 
 import Data.Array
 import Prelude
-
 import Control.Monad.Cont (class MonadCont, ContT(..), runContT)
 import Control.Monad.Error.Class (class MonadThrow, throwError)
 import Control.Monad.Except (class MonadError, ExceptT(..), runExceptT, mapExceptT)
@@ -55,13 +54,14 @@ instance showErrorType :: Show ErrorType where
 
 derive instance eqErrorType :: Eq ErrorType
 
-data EvaluateState s = EvaluateState s
+data EvaluateState s
+  = EvaluateState s
 
 get :: forall m s. MonadState (EvaluateState s) m => m s
 get = MS.gets (\(EvaluateState s) -> s)
 
 gets :: forall s m a. MonadState (EvaluateState s) m => (s -> a) -> m a
-gets f = MS.gets(\(EvaluateState s) -> f s)
+gets f = MS.gets (\(EvaluateState s) -> f s)
 
 modify_ :: forall s m. MonadState (EvaluateState s) m => (s -> s) -> m Unit
 modify_ f = MS.modify_ (\(EvaluateState s) -> EvaluateState $ f s)
