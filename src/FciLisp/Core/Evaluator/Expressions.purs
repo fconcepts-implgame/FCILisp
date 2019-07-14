@@ -30,6 +30,11 @@ fromBool true = VT
 
 fromBool false = VNil
 
+toBool :: Value -> Boolean
+toBool VNil = false
+
+toBool _ = true
+
 type Env
   = Map String Value
 
@@ -136,11 +141,15 @@ eval (LList (LSymbol ">") (Cons x (Cons y Nil))) =
         Tuple (VNat m) (VNat n) -> pure $ fromBool $ m > n
         _ -> fail InvalidArgumentsError "in '>"
 
+-- Condition
+eval (LList (LSymbol "if") (Cons cond (Cons _then (Cons _else Nil)))) = ifM (toBool <$> eval cond) (eval _then) (eval _else)
+
 -- Applications
 eval (LList f (Cons arg Nil)) =
   eval f
-    >>= \v -> case v of
+    >>= \closure -> case closure of
         VClosure ident body env -> runEvaluator <$> (insert ident <$> eval arg <*> get) <@> eval body >>= either throwError pure
+        VRecClosure funName ident body env -> runEvaluator <$> (insert funName closure <$> (insert ident <$> eval arg <*> get)) <@> eval body >>= either throwError pure
         _ -> fail InvalidApplicationError ""
 
 eval _ = fail SyntaxError $ ""
