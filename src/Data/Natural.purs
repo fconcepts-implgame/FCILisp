@@ -15,7 +15,7 @@ fromInt _ = Natural 0
 
 instance enumNatural :: Enum Natural where
   succ n = Just $ n + one
-  pred n = if n == zero then Nothing else Just $ minus n one
+  pred n = if n == zero then Nothing else Just $ n -. one
 
 instance semiringNatural :: Semiring Natural where
   one = Natural 1
@@ -29,5 +29,7 @@ derive newtype instance ordNatural :: Ord Natural
 
 derive newtype instance showNatural :: Show Natural
 
-minus :: Natural -> Natural -> Natural
-minus (Natural m) (Natural n) = fromInt $ m - n
+partialSub :: Natural -> Natural -> Natural
+partialSub (Natural m) (Natural n) = fromInt $ m - n
+
+infixl 6 partialSub as -.

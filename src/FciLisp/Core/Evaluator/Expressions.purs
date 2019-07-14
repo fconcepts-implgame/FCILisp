@@ -8,7 +8,7 @@ import Data.Int (fromString)
 import Data.List (List(..))
 import Data.Map (Map(..), lookup, insert, empty)
 import Data.Maybe (Maybe(..), maybe)
-import Data.Natural (Natural, minus)
+import Data.Natural (Natural, (-.))
 import Data.Newtype (overF)
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
@@ -78,17 +78,16 @@ eval (LList (LSymbol "head") (Cons x Nil)) = eval x >>= \v -> case v of
   _ -> fail InvalidArgumentsError "in 'head"
   
 eval (LList (LSymbol "head") _) = fail InvalidNumberOfArgumentsError "in 'head"
-eval (LList (LSymbol "tail") (Cons x Nil)) = eval x >>= (\v -> case v of
+eval (LList (LSymbol "tail") (Cons x Nil)) = eval x >>= \v -> case v of
     (VPair _ t) -> pure t
     _ -> fail InvalidArgumentsError "in 'tail"
-  )
 eval (LList (LSymbol "tail") _) = fail InvalidNumberOfArgumentsError "in 'tail"
 eval (LList (LSymbol "+") (Cons x (Cons y Nil))) = Tuple <$> eval x <*> eval y >>= \t -> case t of
   Tuple (VNat m) (VNat n) -> pure $ VNat $ m + n
   _ -> fail InvalidArgumentsError "in '+"
 eval (LList (LSymbol "+") _) = fail InvalidNumberOfArgumentsError "in '+"
 eval (LList (LSymbol "-") (Cons x (Cons y Nil))) = Tuple <$> eval x <*> eval y >>= \t -> case t of
-  Tuple (VNat m) (VNat n) -> pure $ VNat $ minus m n
+  Tuple (VNat m) (VNat n) -> pure $ VNat $ m -. n
   _ -> fail InvalidArgumentsError "in '-"
 eval (LList (LSymbol "-") _) = fail InvalidNumberOfArgumentsError "in '-"
 eval (LList (LSymbol "<") (Cons x (Cons y Nil))) = Tuple <$> eval x <*> eval y >>= \t -> case t of

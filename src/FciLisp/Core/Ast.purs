@@ -21,7 +21,7 @@ instance showLisp :: Show Lisp where
   show LNil = "nil"
   show LT = "t"
   show (LNat n) = show n
-  show (LSymbol ident) = show ident
+  show (LSymbol ident) = ident
   show (LError msg code) = "<error: " <> msg <> ">"
   show (LList x xs) = "(" <> show x <> " " <> (xs # map show # A.fromFoldable # joinWith " ") <> ")"
 
