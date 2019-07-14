@@ -15,7 +15,6 @@ import Data.List as List
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype, unwrap, over)
 import Data.Traversable (traverse)
-import FciLisp.Core.Ast (Expression(..))
 
 data RuntimeError
   = RuntimeError ErrorType String

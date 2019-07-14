@@ -7,6 +7,7 @@
     "console",
     "effect",
     "either",
+    "enums",
     "foldable-traversable",
     "lists",
     "maybe",

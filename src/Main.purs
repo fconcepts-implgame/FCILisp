@@ -1,35 +1,46 @@
 module Main where
 
-import Prelude
-import Data.Show (show)
+import Prelude hiding (Ordering(..))
+import Data.List (List(..), (:))
+import Data.Natural (fromInt)
 import Effect (Effect)
 import Effect.Console (log)
-import FciLisp.Core.Ast (Expression(..))
+import FciLisp.Core.Ast (Lisp(..))
 import FciLisp.Core.Evaluator.Class (runEvaluator)
-import FciLisp.Core.Evaluator.Expressions (evaluator, initialEnvironment)
+import FciLisp.Core.Evaluator.Expressions (eval, initEnv)
 
 main :: Effect Unit
 main =
   let
-    nil = List []
-
-    zero = nil
-
-    one = List [ Atom "cons", zero, nil ]
-
-    two = List [ Atom "cons", zero, List [ Atom "cons", one, nil ] ]
-
-    ast1 = List [ Atom "cdr", List [ Atom "cons", List [], List [ Atom "cons", List [], List [] ] ] ]
-
-    ast2 = List [ List [], List [ Atom "cons", List [], List [] ] ]
+    nil = LNil
+    t = LT
+    n i = LNat $ fromInt i
+    op name args = LList (LSymbol name) $ args
+    cons x y = op "cons" $ x:y:Nil
+    head x = op "head" $ x:Nil
+    tail x = op "tail" $ x:Nil
+    add x y = op "+" $ x:y:Nil
+    sub x y = op "-" $ x:y:Nil
+    lt x y = op "<" $ x:y:Nil
+    gt x y = op ">" $ x:y:Nil
+    ast1 = tail $ cons (n 0) $ cons (n 1) $ cons (n 2) nil
+    ast2 = add (n 2) (n 5)
+    ast3 = add (n 8) $ sub (n 2) (n 9)
+    ast4 = lt ast2 ast3
+    ast5 = gt ast2 ast3
   in
     do
       log "Hello sailor!"
-      log $ "AST1: " <> show ast1
-      log $ "eval: " <> (show $ runEvaluator initialEnvironment $ evaluator ast1)
-      log $ show zero
-      log $ show one
-      log $ show two
+      log $ "AST: " <> show ast1
+      log $ "Eval: " <> show (runEvaluator initEnv $ eval ast1)
+      log $ "AST: " <> show ast2
+      log $ "Eval: " <> show (runEvaluator initEnv $ eval ast2)
+      log $ "AST: " <> show ast3
+      log $ "Eval: " <> show (runEvaluator initEnv $ eval ast3)
+      log $ "AST: " <> show ast4
+      log $ "Eval: " <> show (runEvaluator initEnv $ eval ast4)
+      log $ "AST: " <> show ast5
+      log $ "Eval: " <> show (runEvaluator initEnv $ eval ast5)
 
 {-
 -- fibonatti
