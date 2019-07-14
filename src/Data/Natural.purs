@@ -1,4 +1,9 @@
-module Data.Natural where
+module Data.Natural
+  ( Natural()
+  , fromInt
+  , partialSub
+  , (-.)
+  ) where
 
 import Prelude
 import Data.Enum (class Enum)

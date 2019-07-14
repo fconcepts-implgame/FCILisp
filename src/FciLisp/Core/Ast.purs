@@ -1,4 +1,4 @@
-module FciLisp.Core.Ast where
+module FciLisp.Core.Ast (Lisp(..)) where
 
 import Prelude hiding (Ordering(..))
 import Data.Array as A
@@ -10,12 +10,9 @@ data Lisp
   = LNil
   | LT
   | LNat Natural
-  | LSymbol Ident
+  | LSymbol String
   | LError String Lisp
   | LList Lisp (List Lisp)
-
-type Ident
-  = String
 
 instance showLisp :: Show Lisp where
   show LNil = "nil"

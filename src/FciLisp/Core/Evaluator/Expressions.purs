@@ -1,27 +1,28 @@
-module FciLisp.Core.Evaluator.Expressions where
+module FciLisp.Core.Evaluator.Expressions
+  ( Value()
+  , Env
+  , eval
+  , initEnv
+  ) where
 
-import Prelude
+import Prelude hiding (Ordering(..))
 import Control.Monad.Except (throwError)
-import Data.Either (Either(..), either)
-import Data.Foldable (sum)
-import Data.Int (fromString)
+import Data.Either (either)
 import Data.List (List(..))
-import Data.Map (Map(..), lookup, insert, empty)
-import Data.Maybe (Maybe(..), maybe)
+import Data.Map (Map, lookup, insert, empty)
+import Data.Maybe (maybe)
 import Data.Natural (Natural, (-.))
-import Data.Newtype (overF)
-import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import FciLisp.Core.Ast (Lisp(..))
-import FciLisp.Core.Evaluator.Class (ErrorType(..), Evaluator(..), RuntimeError(..), fail, get, gets, modify_, runEvaluator)
+import FciLisp.Core.Evaluator.Class (ErrorType(..), Evaluator, fail, get, gets, runEvaluator)
 
 data Value
   = VNil
   | VT
   | VNat Natural
-  | VSymbol Ident
-  | VClosure Ident Lisp Env
-  | VRecClosure Ident Ident Lisp Env
+  | VSymbol String
+  | VClosure String Lisp Env
+  | VRecClosure String String Lisp Env
   | VPair Value Value
 
 fromBool :: Boolean -> Value
@@ -30,13 +31,10 @@ fromBool true = VT
 fromBool false = VNil
 
 type Env
-  = Map Ident Value
+  = Map String Value
 
 initEnv :: Env
 initEnv = empty
-
-type Ident
-  = String
 
 instance showValue :: Show Value where
   show VNil = "nil"

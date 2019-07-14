@@ -1,20 +1,29 @@
-module FciLisp.Core.Evaluator.Class where
+module FciLisp.Core.Evaluator.Class
+  ( RuntimeError(..)
+  , runtimeErrorType
+  , runtimeErrorMessage
+  , ErrorType(..)
+  , fail
+  , EvaluateState(..)
+  , get
+  , gets
+  , modify_
+  , EvaluatorT(..)
+  , runEvaluatorT
+  , Evaluator
+  , runEvaluator
+  ) where
 
-import Data.Array
 import Prelude
-import Control.Monad.Cont (class MonadCont, ContT(..), runContT)
+import Control.Monad.Cont (class MonadCont, ContT, runContT)
 import Control.Monad.Error.Class (class MonadThrow, throwError)
-import Control.Monad.Except (class MonadError, ExceptT(..), runExceptT, mapExceptT)
-import Control.Monad.Reader (Reader)
-import Control.Monad.State (class MonadState, StateT(..), evalStateT, gets, mapStateT, modify_, runStateT)
+import Control.Monad.Except (class MonadError, ExceptT, runExceptT)
+import Control.Monad.State (class MonadState, StateT, evalStateT)
 import Control.Monad.State as MS
 import Control.Monad.Trans.Class (class MonadTrans, lift)
-import Data.Either (Either(..))
+import Data.Either (Either)
 import Data.Identity (Identity)
-import Data.List as List
-import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype, unwrap, over)
-import Data.Traversable (traverse)
+import Data.Newtype (class Newtype, unwrap)
 
 data RuntimeError
   = RuntimeError ErrorType String
@@ -87,6 +96,9 @@ derive newtype instance monadThrowEvaluatorT :: Monad m => MonadThrow RuntimeErr
 derive newtype instance monadErrorEvaluatorT :: Monad m => MonadError RuntimeError (EvaluatorT s m)
 
 derive newtype instance monadContEvaluatorT :: Monad m => MonadCont (EvaluatorT s m)
+
+instance monadTransEvaluatorT :: MonadTrans (EvaluatorT s) where
+  lift = EvaluatorT <<< lift <<< lift <<< lift
 
 runEvaluatorT :: forall s m a. Monad m => s -> EvaluatorT s m a -> m (Either RuntimeError a)
 runEvaluatorT env eval = runContT (runExceptT (evalStateT (unwrap eval) (EvaluateState env))) pure
