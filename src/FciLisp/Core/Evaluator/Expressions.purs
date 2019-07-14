@@ -98,7 +98,14 @@ eval (LList (LSymbol ">") (Cons x (Cons y Nil))) = Tuple <$> eval x <*> eval y >
   Tuple (VNat m) (VNat n) -> pure $ fromBool $ m > n
   _ -> fail InvalidArgumentsError "in '>"
 -- Applications
-
+eval (LList f (Cons arg Nil)) = eval f >>= \v -> case v of
+  VClosure ident body env -> do
+    env <- get
+    newEnv <- insert ident <$> eval arg <@> env
+    case runEvaluator newEnv $ eval body of
+      Right value -> pure value
+      Left (RuntimeError etype msg) -> fail etype msg
+  _ -> fail InvalidApplicationError ""
 eval _ = fail SyntaxError $ ""
 
 -- type Ident
