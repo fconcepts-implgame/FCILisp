@@ -65,8 +65,6 @@ eval LT = pure VT
 
 eval (LNat n) = pure $ VNat n
 
-eval (LError msg code) = fail SyntaxError $ msg <> " in '" <> show code
-
 eval (LSymbol ident) = gets (lookup ident) >>= maybe (fail UnboundedVariableError $ "variable '" <> ident) pure
 
 eval (LList (LSymbol "fun") (Cons (LSymbol ident) (Cons body Nil))) = VClosure ident body <$> get

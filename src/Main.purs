@@ -6,9 +6,11 @@ import Data.List (List(..), (:), (..))
 import Data.Natural (fromInt)
 import Effect (Effect)
 import Effect.Console (log)
+import Text.Parsing.Parser (runParser)
 import FciLisp.Core.Ast (Lisp(..))
 import FciLisp.Core.Evaluator.Class (runEvaluator)
 import FciLisp.Core.Evaluator.Expressions (eval, initEnv)
+import FCILisp.Core.Parser (expression)
 
 main :: Effect Unit
 main =
@@ -67,6 +69,33 @@ main =
         : Nil
 
     callFibo i = ap fibo (n i)
+
+    code1 = "nil"
+
+    code2 = "()"
+
+    code3 = "t"
+
+    code4 = "32"
+
+    code5 = "<"
+
+    code6 = "1a"
+
+    code7 = "(atom)"
+
+    code8 = "-(a"
+
+    code9 = "(cons 3 1a)"
+
+    fiboCode =
+      """(fix f n (if (< n 2)
+                             n
+                             (+ (f (- n 1))
+                                (f (- n 2))
+                             )
+                           )
+                  )"""
   in
     do
       log "Hello sailor!"
@@ -87,3 +116,36 @@ main =
       log $ "fibo: " <> show fibo
       for_ (0 .. 10) \i -> do
         log $ "fibo " <> show i <> ": " <> show (runEvaluator initEnv $ eval $ callFibo i)
+      log $ "Code1: " <> show code1
+      log $ "Parse: " <> show (runParser code1 expression)
+      log $ "Code2: " <> show code2
+      log $ "Parse: " <> show (runParser code2 expression)
+      log $ "Code3: " <> show code3
+      log $ "Parse: " <> show (runParser code3 expression)
+      log $ "Code4: " <> show code4
+      log $ "Parse: " <> show (runParser code4 expression)
+      log $ "Code5: " <> show code5
+      log $ "Parse: " <> show (runParser code5 expression)
+      log $ "Code6: " <> show code6
+      log $ "Parse: " <> show (runParser code6 expression)
+      log $ "Code7: " <> show code7
+      log $ "Parse: " <> show (runParser code7 expression)
+      log $ "Code8: " <> show code8
+      log $ "Parse: " <> show (runParser code8 expression)
+      log $ "Code9: " <> show code9
+      log $ "Parse: " <> show (runParser code9 expression)
+      log $ "Parse: " <> show (runParser "a" expression)
+      log $ "Parse: " <> show (runParser "(a)" expression)
+      log $ "Parse: " <> show (runParser "(a )" expression)
+      log $ "Parse: " <> show (runParser "(())" expression)
+      log $ "Parse: " <> show (runParser "(a (a b) (  ) c)" expression)
+      log $ "Parse: " <> show (runParser "( a   (  b )   c )" expression)
+      log $ "FiboCode: " <> show fiboCode
+      log $ "FiboParse: " <> show (runParser fiboCode expression)
+      log $ "FiboEval: " <> show ((runEvaluator initEnv) <<< eval <$> runParser fiboCode expression)
+      for_ (0 .. 10) \i ->
+        let
+          fiboApplyCode = "(" <> fiboCode <> " " <> show i <> ")"
+        in
+          do
+            log $ "fibo " <> show i <> ": " <> show ((runEvaluator initEnv) <<< eval <$> runParser fiboApplyCode expression)
