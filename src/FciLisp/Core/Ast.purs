@@ -14,11 +14,11 @@ data Lisp
   | LList Lisp (List Lisp)
 
 instance showLisp :: Show Lisp where
-  show LNil = "nil"
-  show LT = "t"
-  show (LNat n) = show n
-  show (LSymbol ident) = ident
-  show (LList x xs) = "(" <> (x : xs # map show # A.fromFoldable # joinWith " ") <> ")"
+  show LNil = "Nil"
+  show LT = "T"
+  show (LNat n) = "(Nat " <> show n <> ")"
+  show (LSymbol ident) = "(Symbol " <> ident <> ")"
+  show (LList x xs) = "(List " <> (x : xs # map show # A.fromFoldable # joinWith " ") <> ")"
 
 instance eqLisp :: Eq Lisp where
   eq LNil LNil = true
