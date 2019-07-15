@@ -1,6 +1,6 @@
 # FCILisp
 
-A Pure Lisp implementation for Foundational Concepts Implementation Game.
+A Pure Lisp implementation for Fundamental Concepts Implementation Game.
 
 # Requirements
 
