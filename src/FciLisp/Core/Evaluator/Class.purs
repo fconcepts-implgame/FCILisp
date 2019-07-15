@@ -15,7 +15,6 @@ module FciLisp.Core.Evaluator.Class
   ) where
 
 import Prelude
-import Control.Monad.Cont (class MonadCont, ContT, runContT)
 import Control.Monad.Error.Class (class MonadThrow, throwError)
 import Control.Monad.Except (class MonadError, ExceptT, runExceptT)
 import Control.Monad.State (class MonadState, StateT, evalStateT)
@@ -75,7 +74,7 @@ modify_ :: forall s m. MonadState (EvaluateState s) m => (s -> s) -> m Unit
 modify_ f = MS.modify_ (\(EvaluateState s) -> EvaluateState $ f s)
 
 newtype EvaluatorT s m a
-  = EvaluatorT (StateT (EvaluateState s) (ExceptT RuntimeError (ContT (Either RuntimeError a) m)) a)
+  = EvaluatorT (StateT (EvaluateState s) (ExceptT RuntimeError m) a)
 
 derive instance newtypeEvaluatorT :: Newtype (EvaluatorT s m a) _
 
@@ -95,13 +94,11 @@ derive newtype instance monadThrowEvaluatorT :: Monad m => MonadThrow RuntimeErr
 
 derive newtype instance monadErrorEvaluatorT :: Monad m => MonadError RuntimeError (EvaluatorT s m)
 
-derive newtype instance monadContEvaluatorT :: Monad m => MonadCont (EvaluatorT s m)
-
 instance monadTransEvaluatorT :: MonadTrans (EvaluatorT s) where
-  lift = EvaluatorT <<< lift <<< lift <<< lift
+  lift = EvaluatorT <<< lift <<< lift
 
 runEvaluatorT :: forall s m a. Monad m => s -> EvaluatorT s m a -> m (Either RuntimeError a)
-runEvaluatorT env eval = runContT (runExceptT (evalStateT (unwrap eval) (EvaluateState env))) pure
+runEvaluatorT env eval = runExceptT (evalStateT (unwrap eval) (EvaluateState env))
 
 type Evaluator s
   = EvaluatorT s Identity
