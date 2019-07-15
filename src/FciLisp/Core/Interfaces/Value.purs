@@ -8,8 +8,10 @@ module FciLisp.Core.Interfaces.Value
   , partialTail
   , partialLift1
   , partialLift2
+  , partialLift2Partial
   , partialLift1Nat
   , partialLift2Nat
+  , partialLift2NatPartial
   , partialLift2NatBool
   , partialLiftN
   , partialLiftNNat
@@ -93,11 +95,17 @@ partialLift1 to from f x = f <$> to x <#> from
 partialLift2 :: forall a b c. (Value -> Maybe a) -> (Value -> Maybe b) -> (c -> Value) -> (a -> b -> c) -> Value -> Value -> Maybe Value
 partialLift2 to1 to2 from f x y = f <$> to1 x <*> to2 y <#> from
 
+partialLift2Partial :: forall a b c. (Value -> Maybe a) -> (Value -> Maybe b) -> (c -> Value) -> (a -> b -> Maybe c) -> Value -> Value -> Maybe Value
+partialLift2Partial to1 to2 from f x y = f <$> to1 x <*> to2 y >>= (map from)
+
 partialLift1Nat :: (Natural -> Natural) -> Value -> Maybe Value
 partialLift1Nat = partialLift1 toNat VNat
 
 partialLift2Nat :: (Natural -> Natural -> Natural) -> Value -> Value -> Maybe Value
 partialLift2Nat = partialLift2 toNat toNat VNat
+
+partialLift2NatPartial :: (Natural -> Natural -> Maybe Natural) -> Value -> Value -> Maybe Value
+partialLift2NatPartial = partialLift2Partial toNat toNat VNat
 
 partialLift2NatBool :: (Natural -> Natural -> Boolean) -> Value -> Value -> Maybe Value
 partialLift2NatBool = partialLift2 toNat toNat fromBool

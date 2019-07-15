@@ -3,6 +3,9 @@ module Data.Natural
   , fromInt
   , partialSub
   , (-.)
+  , partialDiv
+  , (/.)
+  , partialMod
   ) where
 
 import Prelude
@@ -38,3 +41,11 @@ partialSub :: Natural -> Natural -> Natural
 partialSub (Natural m) (Natural n) = Natural $ m - n
 
 infixl 6 partialSub as -.
+
+partialDiv :: Natural -> Natural -> Maybe Natural
+partialDiv (Natural m) (Natural n) = if n /= 0 then Just $ Natural $ m / n else Nothing
+
+infixl 7 partialDiv as /.
+
+partialMod :: Natural -> Natural -> Maybe Natural
+partialMod (Natural m) (Natural n) = if n /= 0 then Just $ Natural $ m `mod` n else Nothing

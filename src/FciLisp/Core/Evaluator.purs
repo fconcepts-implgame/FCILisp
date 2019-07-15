@@ -6,10 +6,10 @@ import Prelude hiding (Ordering(..))
 import Data.List (List(..))
 import Data.Map (lookup, insert)
 import Data.Maybe (Maybe, maybe)
-import Data.Natural (Natural, (-.))
+import Data.Natural (Natural, (-.), (/.), partialMod)
 import FciLisp.Core.Evaluator.Class (ErrorType(..), Evaluator, fail, get, gets, runEvaluator, fromEither)
 import FciLisp.Core.Interfaces.Ast (Lisp(..))
-import FciLisp.Core.Interfaces.Value (Value(..), isAtom, fromBool, toBool, partialHead, partialTail, partialLift2Nat, partialLift2NatBool, Env)
+import FciLisp.Core.Interfaces.Value (Value(..), isAtom, fromBool, toBool, partialHead, partialTail, partialLift2Nat, partialLift2NatPartial, partialLift2NatBool, Env)
 
 eval :: Lisp -> Evaluator Env Value
 -- Literals and Constructors
@@ -59,6 +59,18 @@ eval (LList (LSymbol "-") (Cons x (Cons y Nil))) = eval2Nat (-.) x y >>= maybe (
 
 eval (LList (LSymbol "-") _) = fail InvalidNumberOfArgumentsError "in '-"
 
+eval (LList (LSymbol "*") (Cons x (Cons y Nil))) = eval2Nat (*) x y >>= maybe (fail InvalidArgumentsError "in '*") pure
+
+eval (LList (LSymbol "*") _) = fail InvalidNumberOfArgumentsError "in '*"
+
+eval (LList (LSymbol "div") (Cons x (Cons y Nil))) = eval2NatPartial (/.) x y >>= maybe (fail InvalidArgumentsError "in 'div") pure
+
+eval (LList (LSymbol "div") _) = fail InvalidNumberOfArgumentsError "in 'div"
+
+eval (LList (LSymbol "mod") (Cons x (Cons y Nil))) = eval2NatPartial partialMod x y >>= maybe (fail InvalidArgumentsError "in 'mod") pure
+
+eval (LList (LSymbol "mod") _) = fail InvalidNumberOfArgumentsError "in 'mod"
+
 eval (LList (LSymbol "<") (Cons x (Cons y Nil))) = eval2NatBool (<) x y >>= maybe (fail InvalidArgumentsError "in '<") pure
 
 eval (LList (LSymbol ">") (Cons x (Cons y Nil))) = eval2NatBool (<) x y >>= maybe (fail InvalidArgumentsError "in '>") pure
@@ -78,6 +90,9 @@ eval _ = fail SyntaxError $ ""
 
 eval2Nat :: (Natural -> Natural -> Natural) -> Lisp -> Lisp -> Evaluator Env (Maybe Value)
 eval2Nat f x y = partialLift2Nat f <$> eval x <*> eval y
+
+eval2NatPartial :: (Natural -> Natural -> Maybe Natural) -> Lisp -> Lisp -> Evaluator Env (Maybe Value)
+eval2NatPartial f x y = partialLift2NatPartial f <$> eval x <*> eval y
 
 eval2NatBool :: (Natural -> Natural -> Boolean) -> Lisp -> Lisp -> Evaluator Env (Maybe Value)
 eval2NatBool f x y = partialLift2NatBool f <$> eval x <*> eval y
