@@ -7,10 +7,11 @@ import Data.Natural (fromInt)
 import Effect (Effect)
 import Effect.Console (log)
 import Text.Parsing.Parser (runParser)
-import FciLisp.Core.Ast (Lisp(..))
+import FciLisp.Core.Interfaces.Ast (Lisp(..))
+import FciLisp.Core.Interfaces.Value (initEnv)
 import FciLisp.Core.Evaluator.Class (runEvaluator)
-import FciLisp.Core.Evaluator.Expressions (eval, initEnv)
-import FCILisp.Core.Parser (expression)
+import FciLisp.Core.Evaluator (eval)
+import FciLisp.Core.Parser (expression)
 
 main :: Effect Unit
 main =

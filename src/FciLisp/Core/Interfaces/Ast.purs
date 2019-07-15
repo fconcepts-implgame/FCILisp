@@ -1,4 +1,6 @@
-module FciLisp.Core.Ast (Lisp(..)) where
+module FciLisp.Core.Interfaces.Ast
+  ( Lisp(..)
+  ) where
 
 import Prelude hiding (Ordering(..))
 import Data.Array as A

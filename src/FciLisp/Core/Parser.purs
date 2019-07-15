@@ -1,4 +1,4 @@
-module FCILisp.Core.Parser
+module FciLisp.Core.Parser
   ( expression
   ) where
 
@@ -16,31 +16,29 @@ import Text.Parsing.Parser (ParserT)
 import Text.Parsing.Parser.Combinators (sepEndBy, between)
 import Text.Parsing.Parser.String (eof, oneOf, string)
 import Text.Parsing.Parser.Token (space, alphaNum)
-import FciLisp.Core.Ast (Lisp(..))
+import FciLisp.Core.Interfaces.Ast (Lisp(..))
 
 expression :: ParserT String Identity Lisp
 expression = spaces *> expr <* eof
   where
-  sep = void space
+  spaces = A.many $ void space
 
-  spaces = A.many sep
-
-  spaces1 = A.some sep
+  spaces1 = A.some $ void space
 
   nil = const LNil <$> string "nil"
 
   t = const LT <$> string "t"
 
-  symbol =
+  natOrSymbol =
     fromCharArray <$> (A.some $ alphaNum <|> oneOf [ '!', '@', '#', '$', '%', '^', '&', '*', '-', '_', '=', '+', '`', '~', '|', ';', ':', '\'', '"', ',', '<', '.', '>', '/', '?' ])
-      >>= \str -> pure $ fromString str # maybe (LSymbol str) (LNat <<< fromInt)
+      <#> \str -> fromString str # maybe (LSymbol str) (LNat <<< fromInt)
 
-  parens = between (string "(" <* spaces) (spaces *> string ")")
+  parens = between (string "(" <* spaces) (string ")")
 
   list e =
-    parens ((sepEndBy e spaces1) <* spaces)
-      >>= \xs -> case xs of
-          Nil -> pure LNil
-          Cons y ys -> pure $ LList y ys
+    parens (sepEndBy e spaces1)
+      <#> \xs -> case xs of
+          Nil -> LNil
+          Cons y ys -> LList y ys
 
-  expr = fix \e -> nil <|> t <|> symbol <|> list e
+  expr = fix \e -> nil <|> t <|> natOrSymbol <|> list e

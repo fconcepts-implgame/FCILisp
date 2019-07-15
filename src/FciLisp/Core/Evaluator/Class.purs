@@ -12,6 +12,7 @@ module FciLisp.Core.Evaluator.Class
   , runEvaluatorT
   , Evaluator
   , runEvaluator
+  , fromEither
   ) where
 
 import Prelude
@@ -20,7 +21,7 @@ import Control.Monad.Except (class MonadError, ExceptT, runExceptT)
 import Control.Monad.State (class MonadState, StateT, evalStateT)
 import Control.Monad.State as MS
 import Control.Monad.Trans.Class (class MonadTrans, lift)
-import Data.Either (Either)
+import Data.Either (Either, either)
 import Data.Identity (Identity)
 import Data.Newtype (class Newtype, unwrap)
 
@@ -105,3 +106,6 @@ type Evaluator s
 
 runEvaluator :: forall s a. s -> Evaluator s a -> Either RuntimeError a
 runEvaluator env = unwrap <<< runEvaluatorT env
+
+fromEither :: forall s a. Either RuntimeError a -> Evaluator s a
+fromEither = either throwError pure

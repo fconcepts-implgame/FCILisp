@@ -35,6 +35,6 @@ derive newtype instance ordNatural :: Ord Natural
 derive newtype instance showNatural :: Show Natural
 
 partialSub :: Natural -> Natural -> Natural
-partialSub (Natural m) (Natural n) = fromInt $ m - n
+partialSub (Natural m) (Natural n) = Natural $ m - n
 
 infixl 6 partialSub as -.
