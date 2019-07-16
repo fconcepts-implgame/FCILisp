@@ -42,7 +42,7 @@ main =
 
     fun x body = op "fun" $ (s x) : body : Nil
 
-    fix f x body = op "fix" $ (s f) : (s x) : body : Nil
+    recur f x body = op "recur" $ (s f) : (s x) : body : Nil
 
     ap f x = LList f $ x : Nil
 
@@ -61,7 +61,7 @@ main =
     ast7 = ap ast6 (n 4)
 
     fibo =
-      fix "f" "n" $ op "if" $ (op "<" $ (s "n") : (n 2) : Nil)
+      recur "f" "n" $ op "if" $ (op "<" $ (s "n") : (n 2) : Nil)
         : (s "n")
         : ( op "+" $ (op "f" $ (op "-" $ (s "n") : (n 1) : Nil) : Nil)
               : (op "f" $ (op "-" $ (s "n") : (n 2) : Nil) : Nil)
@@ -90,7 +90,7 @@ main =
     code9 = "(cons 3 1a)"
 
     fiboCode =
-      """(fix f n (if (< n 2)
+      """(recur f n (if (< n 2)
                              n
                              (+ (f (- n 1))
                                 (f (- n 2))

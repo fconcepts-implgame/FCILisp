@@ -25,9 +25,9 @@ eval (LList (LSymbol "fun") (Cons (LSymbol ident) (Cons body Nil))) = VClosure i
 
 eval (LList (LSymbol "fun") _) = fail InvalidNumberOfArgumentsError "in 'fun"
 
-eval (LList (LSymbol "fix") (Cons (LSymbol funName) (Cons (LSymbol ident) (Cons body Nil)))) = VRecClosure funName ident body <$> get
+eval (LList (LSymbol "recur") (Cons (LSymbol funName) (Cons (LSymbol ident) (Cons body Nil)))) = VRecClosure funName ident body <$> get
 
-eval (LList (LSymbol "fix") _) = fail InvalidNumberOfArgumentsError "in 'fix"
+eval (LList (LSymbol "recur") _) = fail InvalidNumberOfArgumentsError "in 'recur"
 
 eval (LList (LSymbol "cons") (Cons x (Cons y Nil))) = VPair <$> eval x <*> eval y
 
