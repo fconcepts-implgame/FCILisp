@@ -5,7 +5,8 @@ You can edit this file as you like.
 { name =
     "fci-lisp"
 , dependencies =
-    [ "arrays"
+    [ "aff"
+    , "arrays"
     , "console"
     , "effect"
     , "either"
@@ -17,6 +18,7 @@ You can edit this file as you like.
     , "parsing"
     , "prelude"
     , "psci-support"
+    , "spec"
     , "strings"
     , "transformers"
     , "tuples"
