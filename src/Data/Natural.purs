@@ -38,7 +38,7 @@ derive newtype instance ordNatural :: Ord Natural
 derive newtype instance showNatural :: Show Natural
 
 partialSub :: Natural -> Natural -> Natural
-partialSub (Natural m) (Natural n) = Natural $ m - n
+partialSub (Natural m) (Natural n) = Natural $ let res = m - n in if res >= 0 then res else 0
 
 infixl 6 partialSub as -.
 
