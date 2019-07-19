@@ -9,7 +9,7 @@ import Data.Maybe (Maybe, maybe)
 import Data.Natural (Natural, (-.), (/.), partialMod)
 import FciLisp.Core.Evaluator.Class (ErrorType(..), Evaluator, fail, get, gets, runEvaluator, fromEither)
 import FciLisp.Core.Interfaces.Ast (Lisp(..))
-import FciLisp.Core.Interfaces.Value (Value(..), isAtom, fromBool, toBool, partialHead, partialTail, partialLift2Nat, partialLift2NatPartial, partialLift2NatBool, Env)
+import FciLisp.Core.Interfaces.Value (Value(..), eqAsValue, isAtom, fromBool, toBool, partialHead, partialTail, partialLift2Nat, partialLift2NatPartial, partialLift2NatBool, Env)
 
 eval :: Lisp -> Evaluator Env Value
 -- Literals and Constructors
@@ -38,7 +38,7 @@ eval (LList (LSymbol "atom?") (Cons x Nil)) = isAtom <$> eval x <#> fromBool
 
 eval (LList (LSymbol "atom?") _) = fail InvalidNumberOfArgumentsError "in 'atom?"
 
-eval (LList (LSymbol "eq?") (Cons x (Cons y Nil))) = eq <$> eval x <*> eval y <#> fromBool
+eval (LList (LSymbol "eq?") (Cons x (Cons y Nil))) = eqAsValue <$> eval x <*> eval y <#> fromBool
 
 eval (LList (LSymbol "eq?") _) = fail InvalidNumberOfArgumentsError "in 'eq?"
 

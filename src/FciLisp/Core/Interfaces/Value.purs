@@ -1,5 +1,6 @@
 module FciLisp.Core.Interfaces.Value
   ( Value(..)
+  , eqAsValue
   , isAtom
   , fromBool
   , toBool
@@ -36,6 +37,19 @@ data Value
   | VClosure String Lisp Env
   | VRecClosure String String Lisp Env
   | VPair Value Value
+
+-- eq as Lisp's value
+-- so this is different from eq of Eq Value
+eqAsValue :: Value -> Value -> Boolean
+eqAsValue VNil VNil = true
+
+eqAsValue VT VT = true
+
+eqAsValue (VNat x) (VNat y) = eq x y
+
+eqAsValue (VSymbol x) (VSymbol y) = eq x y
+
+eqAsValue _ _ = false
 
 isAtom :: Value -> Boolean
 isAtom (VPair _ _) = false
@@ -87,6 +101,9 @@ instance eqValue :: Eq Value where
   eq VT VT = true
   eq (VNat x) (VNat y) = eq x y
   eq (VSymbol x) (VSymbol y) = eq x y
+  eq (VClosure arg1 body1 env1) (VClosure arg2 body2 env2) = eq arg1 arg2 && eq body1 body2 && eq env1 env2
+  eq (VRecClosure fName1 arg1 body1 env1) (VRecClosure fName2 arg2 body2 env2) = eq fName1 fName2 && eq arg1 arg2 && eq body1 body2 && eq env1 env2
+  eq (VPair x1 y1) (VPair x2 y2) = eq x1 x2 && eq y1 y2
   eq _ _ = false
 
 partialLift1 :: forall a b. (Value -> Maybe a) -> (b -> Value) -> (a -> b) -> Value -> Maybe Value
