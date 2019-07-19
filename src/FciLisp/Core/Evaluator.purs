@@ -73,7 +73,7 @@ eval (LList (LSymbol "mod") _) = fail InvalidNumberOfArgumentsError "in 'mod"
 
 eval (LList (LSymbol "<") (Cons x (Cons y Nil))) = eval2NatBool (<) x y >>= maybe (fail InvalidArgumentsError "in '<") pure
 
-eval (LList (LSymbol ">") (Cons x (Cons y Nil))) = eval2NatBool (<) x y >>= maybe (fail InvalidArgumentsError "in '>") pure
+eval (LList (LSymbol ">") (Cons x (Cons y Nil))) = eval2NatBool (>) x y >>= maybe (fail InvalidArgumentsError "in '>") pure
 
 -- Condition
 eval (LList (LSymbol "if") (Cons cond (Cons _then (Cons _else Nil)))) = ifM (toBool <$> eval cond) (eval _then) (eval _else)
