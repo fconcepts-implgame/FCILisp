@@ -60,7 +60,7 @@ See the [Puresuit](https://pursuit.purescript.org/builtins/docs/Prim#t:Int).
 
 Symbols are non-litaral strings of available charactgers.
 
-You can use alphanumeric characters and symbols: `!`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `-`, `_`, `=`, `+`, `\`, `~`, `|`, `;`, `:`, `'`, '"', `,`, `<`, `.`, `>`, `/`, `?`.
+You can use alphanumeric characters and symbols: `!`, `@`, `#`, `$`, `%`, `^`, `&`, `*`, `-`, `_`, `=`, `+`, `\`, `~`, `|`, `;`, `:`, `'`, `"`, `,`, `<`, `.`, `>`, `/`, `?`.
 
 So far symbols are strins that are not nutural number literals, but in the future it may be strings that not another literals, such as quoted symbol literals, character literals, or string literals.
 
