@@ -139,7 +139,11 @@ testEvaluators =
 
     f1 = fun "n" fBody1
 
-    fibo = recur "f" "n" $ op3 "if" (op2 "<" (sym "n") (nat 2)) (sym "n") (op2 "+" (op1 "f" (op2 "-" (sym "n") (nat 1))) (op1 "f" (op2 "-" (sym "n") (nat 2))))
+    factBody = op3 "if" (op2 "eq?" (sym "n") (nat 0)) (nat 1) (op2 "*" (sym "n") (op1 "f" (op2 "-" (sym "n") (nat 1))))
+
+    fact = recur "f" "n" factBody
+
+    fibo = recur "fibo" "n" $ op3 "if" (op2 "<" (sym "n") (nat 2)) (sym "n") (op2 "+" (op1 "fibo" (op2 "-" (sym "n") (nat 1))) (op1 "fibo" (op2 "-" (sym "n") (nat 2))))
 
     validTests =
       [ Tuple (op1 "tail" $ op2 "cons" (nat 1) (op2 "cons" (nat 2) nil))
@@ -164,6 +168,14 @@ testEvaluators =
       , Tuple (apply f1 (nat 4))
           $ VNat
           $ fromInt 5
+      , Tuple fact
+          $ VRecClosure "f" "n" factBody initEnv
+      , Tuple (apply fact (nat 1))
+          $ VNat
+          $ fromInt 1
+      , Tuple (apply fact (nat 5))
+          $ VNat
+          $ fromInt 120
       , Tuple (apply fibo (nat 1))
           $ VNat
           $ fromInt 1
