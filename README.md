@@ -18,13 +18,13 @@ spago test
 
 # Syntax
 
-Everything is an expression in FciLisp.
+Everything is an expression in FCILisp.
 
 Expressions consist of lists and others, called atoms.
 
 Atoms are further subdevided.
 
-FciLisp has pairs and atoms as first-class objects (hereafter, the first-class object is called "value").
+FCILisp has pairs and atoms as first-class objects (hereafter, the first-class object is called "value").
 
 Atoms are natural numbers, symbols, functions, and recursive functions.
 
@@ -66,12 +66,12 @@ So far symbols are strins that are not nutural number literals, but in the futur
 
 Symbols can be bound to values and can be treated as variables.
 
-In FciLisp, all variables are constant and all values are immutable.
+In FCILisp, all variables are constant and all values are immutable.
 
 
 #### Functions
 
-As in other functional languages, functions are first-class objects in FciLisp, so they can be passed to functions, bound to symbols, and create instances in FciLisp.
+As in other functional languages, functions are first-class objects in FCILisp, so they can be passed to functions, bound to symbols, and create instances in FCILisp.
 
 ```lisp
 (fun x (+ x 2))
@@ -99,7 +99,7 @@ To create a function with multiple arguments, you can nest it.
 
 ### Pairs
 
-There are no such value as lists, just pairs in FciLisp.
+There are no such value as lists, just pairs in FCILisp.
 
 But you can construct lists by using pairs as below.
 
