@@ -41,10 +41,7 @@ derive instance eqRuntimeError :: Eq RuntimeError
 
 data ErrorType
   = InvalidArgumentsError
-  | SyntaxError
-  | ConditionCoverageError
   | UnboundedVariableError
-  | RedefinedError
   | InvalidNumberOfArgumentsError
   | InvalidApplicationError
 
@@ -53,10 +50,7 @@ fail etype msg = throwError $ RuntimeError etype msg
 
 instance showErrorType :: Show ErrorType where
   show InvalidArgumentsError = "InvalidArgumentsError"
-  show SyntaxError = "SyntaxError"
-  show ConditionCoverageError = "ConditionCoverageError"
   show UnboundedVariableError = "UnboundedVariableError"
-  show RedefinedError = "RedefinedError"
   show InvalidNumberOfArgumentsError = "InvalidNumberOfArgumentsError"
   show InvalidApplicationError = "InvalidApplicationError"
 
