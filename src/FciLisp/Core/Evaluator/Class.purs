@@ -24,6 +24,7 @@ import Control.Monad.Trans.Class (class MonadTrans, lift)
 import Data.Either (Either, either)
 import Data.Identity (Identity)
 import Data.Newtype (class Newtype, unwrap)
+import Text.Parsing.Parser (ParseError)
 
 data RuntimeError
   = RuntimeError ErrorType String
@@ -35,7 +36,7 @@ runtimeErrorMessage :: RuntimeError -> String
 runtimeErrorMessage (RuntimeError _ msg) = msg
 
 instance showRuntimeError :: Show RuntimeError where
-  show (RuntimeError etype msg) = "(RuntimeError " <> show etype <> ": " <> msg <> ")"
+  show (RuntimeError etype msg) = "(RuntimeError " <> show etype <> " " <> show msg <> ")"
 
 derive instance eqRuntimeError :: Eq RuntimeError
 
@@ -44,6 +45,7 @@ data ErrorType
   | UnboundedVariableError
   | InvalidNumberOfArgumentsError
   | InvalidApplicationError
+  | InvalidSyntaxError ParseError
 
 fail :: forall m a. MonadThrow RuntimeError m => ErrorType -> String -> m a
 fail etype msg = throwError $ RuntimeError etype msg
@@ -53,6 +55,7 @@ instance showErrorType :: Show ErrorType where
   show UnboundedVariableError = "UnboundedVariableError"
   show InvalidNumberOfArgumentsError = "InvalidNumberOfArgumentsError"
   show InvalidApplicationError = "InvalidApplicationError"
+  show (InvalidSyntaxError e) = "(SyntaxError " <> show e <> ")"
 
 derive instance eqErrorType :: Eq ErrorType
 

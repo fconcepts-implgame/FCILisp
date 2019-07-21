@@ -136,7 +136,7 @@ In the future, if `quote` is implemented, the symbol will also be comparable.
 
 ## Operators
 
-Builtin operators can have multiple arguments.
+Operators are builtin functions and can have multiple arguments.
 
 
 ### Pair operators
