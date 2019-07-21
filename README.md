@@ -38,7 +38,7 @@ Note that the term "atom" is used here in two senses, one as a grammer and the o
 Atoms are just strings that are not lists.
 
 
-#### nil, t
+#### `nil`, `t`
 
 `t` and `nil` are special symbols.
 
@@ -191,19 +191,9 @@ An error occurs if the second arguments is 0.
 Takes two natural numbers and returns `t` if the first is less than the second, otherwise returns `nil`.
 
 
-#### `<`
+#### `>`
 
 Takes two natural numbers and returns `t` if the first is greater than the second, otherwise returns `nil`.
-
-
-#### `<=`
-
-Takes two natural numbers and returns `t` if the first is less than or equal to the second, otherwise returns `nil`.
-
-
-#### `<`
-
-Takes two natural numbers and returns `t` if the first is greater than or equal to the second, otherwise returns `nil`.
 
 
 ## Conditions
