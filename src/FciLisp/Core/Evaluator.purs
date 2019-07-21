@@ -7,8 +7,9 @@ import Data.List (List(..))
 import Data.Map (lookup, insert)
 import Data.Maybe (Maybe, maybe)
 import Data.Natural (Natural, (-.), (/.), partialMod)
-import FciLisp.Core.Evaluator.Class (ErrorType(..), Evaluator, fail, fromEither, get, gets, runEvaluator)
+import FciLisp.Core.Evaluator.Class (Evaluator, fromEither, get, gets, runEvaluator)
 import FciLisp.Core.Interfaces.Ast (Lisp(..))
+import FciLisp.Core.Interfaces.RuntimeError (ErrorType(..), fail)
 import FciLisp.Core.Interfaces.Value (Value(..), eqAsValue, isAtom, fromBool, toBool, partialHead, partialTail, partialLift2Nat, partialLift2NatPartial, partialLift2NatBool, Env)
 
 eval :: Lisp -> Evaluator Env Value
