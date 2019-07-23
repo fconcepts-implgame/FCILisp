@@ -22,9 +22,9 @@ module FciLisp.Core.Interfaces.Value
 
 import Prelude
 import Data.Foldable (class Foldable, foldl)
-import Data.Natural (Natural)
 import Data.Map (Map, empty)
 import Data.Maybe (Maybe(..))
+import Data.Natural (Natural)
 import Data.Traversable (class Traversable, traverse)
 import FciLisp.Core.Interfaces.Ast (Lisp)
 

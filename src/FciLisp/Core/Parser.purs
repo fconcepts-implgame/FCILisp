@@ -12,11 +12,11 @@ import Data.List (List(..))
 import Data.Maybe (maybe)
 import Data.Natural (fromInt)
 import Data.String.CodeUnits (fromCharArray)
+import FciLisp.Core.Interfaces.Ast (Lisp(..))
 import Text.Parsing.Parser (ParserT)
 import Text.Parsing.Parser.Combinators (sepEndBy, between)
 import Text.Parsing.Parser.String (eof, oneOf, string)
 import Text.Parsing.Parser.Token (space, alphaNum)
-import FciLisp.Core.Interfaces.Ast (Lisp(..))
 
 expression :: ParserT String Identity Lisp
 expression = spaces *> expr <* eof
